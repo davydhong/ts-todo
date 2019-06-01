@@ -1,33 +1,57 @@
-var TodoService = (function() {
-  var _lastId = 0;
+interface Todo {
+  id: number;
+  name: string;
+  state: TodoState;
+}
 
-  function generateTodoId() {
-    return (_lastId += 1);
+enum TodoState {
+  Active = 1,
+  Complete = 2
+}
+
+interface ITodoService {
+  add(todo: Todo): Todo;
+  add(todo: string): Todo;
+  clearCompleted(): void;
+  getById(todoId: number): Todo;
+  gettoggle();
+  _find;
+}
+
+class TodoService {
+  private static _lastId = 0;
+
+  private static generateTodoId() {
+    return (TodoService._lastId += 1);
   }
 
-  function clone(src) {
+  static clone<T>(src: T): T {
     var clone = JSON.stringify(src);
     return JSON.parse(clone);
   }
 
-  function TodoService(todos) {
+  private todos: Todo[] = [];
+
+  constructor(todos) {
     var _this = this;
 
     this.todos = [];
 
     if (todos) {
-      todos.forEach(function(todo) {
+      todos.forEach(todo => {
         _this.add(todo);
       });
     }
   }
 
   // Accepts a todo name or todo object
-  TodoService.prototype.add = function(input) {
+  add(todo: Todo): Todo;
+  add(todo: string): Todo;
+  add(input): Todo {
     var todo = {
-      id: generateTodoId(),
+      id: TodoService.generateTodoId(),
       name: null,
-      state: 1
+      state: TodoState.Active
     };
 
     if (typeof input === 'string') {
@@ -41,49 +65,43 @@ var TodoService = (function() {
     this.todos.push(todo);
 
     return todo;
-  };
+  }
 
-  TodoService.prototype.clearCompleted = function() {
-    this.todos = this.todos.filter(function(x) {
-      return x.state == 1;
-    });
-  };
+  clearCompleted(): void {
+    this.todos = this.todos.filter(x => x.state == TodoState.Active);
+  }
 
-  TodoService.prototype.getAll = function() {
-    return clone(this.todos);
-  };
+  getAll(): Todo[] {
+    return TodoService.clone(this.todos);
+  }
 
-  TodoService.prototype.getById = function(todoId) {
+  getById(todoId: number): Todo {
     var todo = this._find(todoId);
-    return clone(todo);
-  };
+    return TodoService.clone<Todo>(todo);
+  }
 
-  TodoService.prototype.toggle = function(todoId) {
+  toggle(todoId: number): void {
     var todo = this._find(todoId);
 
     if (!todo) return;
 
     switch (todo.state) {
-      case 1:
-        todo.state = 2;
+      case TodoState.Active:
+        todo.state = TodoState.Complete;
         break;
-      case 2:
-        todo.state = 1;
+      case TodoState.Complete:
+        todo.state = TodoState.Active;
         break;
     }
-  };
+  }
 
-  TodoService.prototype._find = function(todoId) {
-    var filtered = this.todos.filter(function(x) {
-      return x.id == todoId;
-    });
+  _find(todoId: number): Todo {
+    var filtered = this.todos.filter(x => x.id == todoId);
 
     if (filtered.length) {
       return filtered[0];
     }
 
     return null;
-  };
-
-  return TodoService;
-})();
+  }
+}
