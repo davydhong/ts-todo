@@ -1,9 +1,11 @@
 import { Todo, TodoState } from './Model';
 
+// NOTE: class decorator
 @validatable
 export class ValidatableTodo implements Todo {
   id: number;
 
+  // NOTE: param decorator
   @required
   @regex(`^[a-zA-Z ]*$`)
   name: string;
@@ -46,6 +48,7 @@ export function validatable(target: Function) {
   target.prototype.validate = validate;
 }
 
+// NOTE: param decorator
 export function required(target: Object, propertyName: string) {
   let validatable = <{ _validators: IValidator[] }>target,
     validators = validatable._validators || (validatable._validators = []);
@@ -66,6 +69,7 @@ export function required(target: Object, propertyName: string) {
   });
 }
 
+// NOTE: decorator factory
 export function regex(pattern: string) {
   let expression = new RegExp(pattern);
 

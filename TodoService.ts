@@ -33,6 +33,7 @@ export default class TodoService implements ITodoService {
   // Accepts a todo name or todo object
   add(todo: Todo): Todo;
   add(todo: string): Todo;
+  // NOTE: method decorator
   @log
   add(input): Todo {
     var todo = new ValidatableTodo();
@@ -99,6 +100,7 @@ export default class TodoService implements ITodoService {
   }
 }
 
+// NOTE: function decorator
 function log(target: Object, methodName: string, descriptor: TypedPropertyDescriptor<Function>) {
   let originalMethod = descriptor.value;
 
