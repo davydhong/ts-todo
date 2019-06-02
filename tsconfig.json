@@ -3,6 +3,7 @@
     "target": "es6",
     "declaration": true,
     "module": "system",
-    "sourceMap": true
+    "sourceMap": true,
+    "watch": true
   }
 }

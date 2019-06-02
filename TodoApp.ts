@@ -45,7 +45,7 @@ export class TodoApp {
     });
 
     todoListEl.addEventListener('todo-toggle', function(evnt) {
-      var todoId = evnt.details.todoId;
+      var todoId = evnt.detail.todoId;
       _this.todoService.toggle(todoId);
       _this.renderTodos();
     });
@@ -59,3 +59,15 @@ export class TodoApp {
     this.renderTodos();
   }
 }
+
+var originalMethod = TodoService.prototype.add;
+
+TodoService.prototype.add = function(...args) {
+  console.log(`add(${JSON.stringify(args)})`);
+
+  let returnValue = originalMethod.apply(this, args);
+
+  console.log(`add(${JSON.stringify(args)}) => ${JSON.stringify(returnValue)}`);
+
+  return returnValue;
+};
