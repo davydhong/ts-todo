@@ -1,35 +1,25 @@
-interface Todo {
-  id: number;
-  name: string;
-  state: TodoState;
-}
+import { Todo, TodoState } from './Model';
 
-enum TodoState {
-  Active = 1,
-  Complete = 2
-}
-
-interface ITodoService {
+export interface ITodoService {
   add(todo: Todo): Todo;
   add(todo: string): Todo;
   clearCompleted(): void;
+  getAll(): Todo[];
   getById(todoId: number): Todo;
-  gettoggle();
-  _find;
+  toggle(todoId: number): void;
+}
+let _lastId = 0;
+
+function generateTodoId(): number {
+  return (_lastId += 1);
 }
 
-class TodoService {
-  private static _lastId = 0;
+function clone<T>(src: T): T {
+  var clone = JSON.stringify(src);
+  return JSON.parse(clone);
+}
 
-  private static generateTodoId() {
-    return (TodoService._lastId += 1);
-  }
-
-  static clone<T>(src: T): T {
-    var clone = JSON.stringify(src);
-    return JSON.parse(clone);
-  }
-
+export default class TodoService implements ITodoService {
   private todos: Todo[] = [];
 
   constructor(todos) {
@@ -49,7 +39,7 @@ class TodoService {
   add(todo: string): Todo;
   add(input): Todo {
     var todo = {
-      id: TodoService.generateTodoId(),
+      id: generateTodoId(),
       name: null,
       state: TodoState.Active
     };
@@ -72,12 +62,12 @@ class TodoService {
   }
 
   getAll(): Todo[] {
-    return TodoService.clone(this.todos);
+    return clone(this.todos);
   }
 
   getById(todoId: number): Todo {
     var todo = this._find(todoId);
-    return TodoService.clone<Todo>(todo);
+    return clone<Todo>(todo);
   }
 
   toggle(todoId: number): void {

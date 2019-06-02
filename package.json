@@ -1,0 +1,23 @@
+{
+  "name": "ts-todo",
+  "version": "1.0.0",
+  "description": "todo-list on typescript",
+  "main": "TodoApp.js",
+  "dependencies": {
+    "@types/jquery": "^3.3.29"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/davydhong/ts-todo.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/davydhong/ts-todo/issues"
+  },
+  "homepage": "https://github.com/davydhong/ts-todo#readme"
+}

@@ -1,4 +1,8 @@
-class TodoApp {
+import { Todo, TodoState } from './Model';
+import TodoService, { ITodoService } from './TodoService';
+import TodoListComponent from './TodoListComponent';
+
+export class TodoApp {
   private todoService: TodoService;
   private todoList: TodoListComponent;
   constructor(el, todos) {
@@ -41,7 +45,7 @@ class TodoApp {
     });
 
     todoListEl.addEventListener('todo-toggle', function(evnt) {
-      var todoId = evnt.detail.todoId;
+      var todoId = evnt.details.todoId;
       _this.todoService.toggle(todoId);
       _this.renderTodos();
     });

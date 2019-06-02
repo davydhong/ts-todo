@@ -1,3 +1,7 @@
+# source maps
+**.map
+**.d.ts
+
 # Logs
 logs
 *.log
