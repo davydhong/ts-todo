@@ -3,15 +3,21 @@ import TodoService, { ITodoService } from './TodoService';
 import TodoListComponent from './TodoListComponent';
 
 export class TodoApp {
-  private todoService: TodoService;
+  private todoService: ITodoService;
   private todoList: TodoListComponent;
+
   constructor(el, todos) {
     this.todoService = new TodoService(todos);
     this.initialize(el);
   }
 
   addTodo(todoName) {
-    this.todoService.add(todoName);
+    try {
+      this.todoService.add(todoName);
+    } catch (x) {
+      console.error(x);
+    }
+
     this.renderTodos();
   }
 
@@ -59,15 +65,3 @@ export class TodoApp {
     this.renderTodos();
   }
 }
-
-var originalMethod = TodoService.prototype.add;
-
-TodoService.prototype.add = function(...args) {
-  console.log(`add(${JSON.stringify(args)})`);
-
-  let returnValue = originalMethod.apply(this, args);
-
-  console.log(`add(${JSON.stringify(args)}) => ${JSON.stringify(returnValue)}`);
-
-  return returnValue;
-};

@@ -4,6 +4,7 @@
     "declaration": true,
     "module": "system",
     "sourceMap": true,
-    "watch": true
+    "watch": true,
+    "experimentalDecorators": true
   }
 }

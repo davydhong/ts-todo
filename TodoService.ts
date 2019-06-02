@@ -1,4 +1,5 @@
 import { Todo, TodoState } from './Model';
+import { ValidatableTodo } from './Validators';
 
 export interface ITodoService {
   add(todo: Todo): Todo;
@@ -8,6 +9,7 @@ export interface ITodoService {
   getById(todoId: number): Todo;
   toggle(todoId: number): void;
 }
+
 let _lastId = 0;
 
 function generateTodoId(): number {
@@ -22,27 +24,20 @@ function clone<T>(src: T): T {
 export default class TodoService implements ITodoService {
   private todos: Todo[] = [];
 
-  constructor(todos) {
-    var _this = this;
-
-    this.todos = [];
-
+  constructor(todos: string[]) {
     if (todos) {
-      todos.forEach(todo => {
-        _this.add(todo);
-      });
+      todos.forEach(todo => this.add(todo));
     }
   }
 
   // Accepts a todo name or todo object
   add(todo: Todo): Todo;
   add(todo: string): Todo;
+  @log
   add(input): Todo {
-    var todo = {
-      id: generateTodoId(),
-      name: null,
-      state: TodoState.Active
-    };
+    var todo = new ValidatableTodo();
+    todo.id = generateTodoId();
+    todo.state = TodoState.Active;
 
     if (typeof input === 'string') {
       todo.name = input;
@@ -50,6 +45,13 @@ export default class TodoService implements ITodoService {
       todo.name = input.name;
     } else {
       throw 'Invalid Todo name!';
+    }
+
+    let errors = todo.validate();
+
+    if (errors.length) {
+      let combinedErrors = errors.map(x => `${x.property}: ${x.message}`);
+      throw `Invalid Todo: ${combinedErrors}`;
     }
 
     this.todos.push(todo);
@@ -67,7 +69,7 @@ export default class TodoService implements ITodoService {
 
   getById(todoId: number): Todo {
     var todo = this._find(todoId);
-    return clone<Todo>(todo);
+    return clone(todo);
   }
 
   toggle(todoId: number): void {
@@ -79,13 +81,14 @@ export default class TodoService implements ITodoService {
       case TodoState.Active:
         todo.state = TodoState.Complete;
         break;
+
       case TodoState.Complete:
         todo.state = TodoState.Active;
         break;
     }
   }
 
-  _find(todoId: number): Todo {
+  private _find(todoId: number): Todo {
     var filtered = this.todos.filter(x => x.id == todoId);
 
     if (filtered.length) {
@@ -94,4 +97,18 @@ export default class TodoService implements ITodoService {
 
     return null;
   }
+}
+
+function log(target: Object, methodName: string, descriptor: TypedPropertyDescriptor<Function>) {
+  let originalMethod = descriptor.value;
+
+  descriptor.value = function(...args) {
+    console.log(`${methodName}(${JSON.stringify(args)})`);
+
+    let returnValue = originalMethod.apply(this, args);
+
+    console.log(`${methodName}(${JSON.stringify(args)}) => ${JSON.stringify(returnValue)}`);
+
+    return returnValue;
+  };
 }
